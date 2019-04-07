@@ -24,10 +24,7 @@
 --
 
 local ControlSpec = require 'controlspec'
-local Ack = require 'jah/ack'
-local midi = require 'midi'
-local grid = require 'grid'
-local Metro = require 'metro'
+local Ack = require 'ack/lib/ack'
 
 engine.name = 'Ack'
 
@@ -78,7 +75,7 @@ end
 local function update_device_indicators()
   screen.move(0,60)
   screen.font_size(8)
-  if midi_device.attached then
+  if midi_device.device then
     if indicate_midi_event then
       screen.level(8)
     else
@@ -87,10 +84,10 @@ local function update_device_indicators()
     screen.text("midi")
   end
   screen.level(15)
-  if midi_device.attached and grid_device.attached then
+  if midi_device.device and grid_device.device then
     screen.text("+")
   end
-  if grid_device.attached then
+  if grid_device.device then
     if indicate_gridkey_event then
       screen.level(8)
     else
@@ -98,7 +95,7 @@ local function update_device_indicators()
     end
     screen.text("grid")
   end
-  if midi_device.attached == false and grid_device.attached == false then
+  if midi_device.device == false and grid_device.device == false then
     screen.level(3)
     screen.text("no midi / grid")
   end
@@ -321,7 +318,7 @@ function init()
   params:add_separator()
   Ack.add_effects_params()
 
-  refresh_metro = Metro.alloc(
+  refresh_metro = metro.init(
     function(stage)
       grid_refresh()
     end,
@@ -329,7 +326,7 @@ function init()
   )
   refresh_metro:start()
 
-  refresh_screen_metro = Metro.alloc(
+  refresh_screen_metro = metro.init(
     function(stage)
       redraw()
       if indicate_midi_event then
@@ -343,12 +340,12 @@ function init()
   )
   refresh_screen_metro:start()
 
-  params:read("jah/hello_ack.pset")
+  params:read()
   params:bang()
 end
 
 function cleanup()
-  params:write("jah/hello_ack.pset")
+  params:write()
 end
 
 function redraw()
