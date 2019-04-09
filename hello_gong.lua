@@ -74,11 +74,11 @@ local function update_device_indicators()
 end
 
 local function trig_voice(voicenum, note)
-  engine.noteOn(voicenum-1, note)
+  engine.voice_noteOn(voicenum-1, note)
 end
 
 local function release_voice(voicenum)
-  engine.off(voicenum-1)
+  engine.voice_off(voicenum-1)
 end
 
 local noteslots = {}
@@ -130,10 +130,10 @@ local function cc(ctl, value)
     param_name = "timbre"
     spec = Gong.specs.timbre
     abs = params:get("timbre cc type") == 1
-  elseif ctl == params:get("timemod cc") then
-    param_name = "timemod"
-    spec = Gong.specs.timemod
-    abs = params:get("timemod cc type") == 1
+  elseif ctl == params:get("stretch cc") then
+    param_name = "stretch"
+    spec = Gong.specs.stretch
+    abs = params:get("stretch cc type") == 1
   end
   if param_name then
     if abs then
@@ -151,22 +151,6 @@ local function note_off(note)
     note_downs[slot.id] = false
     redraw()
   end
-end
-
-local function default_patch()
-  params:set("osc1_to_osc3freq", 1)
-  params:set("osc1partial", 2)
-  params:set("osc3gain", 1)
-  params:set("osc3index", 5)
-  params:set("osc3outlevel", 0.1)
-  params:set("env_to_osc1gain", 0.5)
-  params:set("env_to_ampgain", 1)
-  --[[
-  params:set("delay send", -20)
-  params:set("delay time left", 0.03)
-  params:set("delay time right", 0.05)
-  params:set("delay feedback", -30)
-  ]]
 end
 
 local function gridkey_event(x, y, s)
@@ -273,7 +257,6 @@ function init()
   )
   refresh_screen_metro:start()
 
-  default_patch()
   screen.line_width(1.0)
 end
 
@@ -307,7 +290,7 @@ function enc(n, delta)
     params:delta("timbre", delta)
     redraw()
   elseif n == 3 then
-    params:delta("timemod", delta)
+    params:delta("stretch", delta)
     redraw()
   end
 end
