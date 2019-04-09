@@ -14,17 +14,14 @@
 
 local ControlSpec = require 'controlspec'
 local Voice = require 'exp/voice'
-local Gong = require 'jah/gong'
-local midi = require 'midi'
-local grid = require 'grid'
-local Metro = require 'metro'
+local Gong = require 'gong/jah/gong'
 
 engine.name = 'Gong'
 
-local midi_device = midi.connect(1)
+local midi_device = midi.connect()
 local midi_device_is_connected = false
 
-local grid_device = grid.connect(1)
+local grid_device = grid.connect()
 local grid_device_is_connected = false
 
 local indicate_midi_event
@@ -177,15 +174,15 @@ local function gridkey_event(x, y, s)
   local note = x * 8 + y
   if s == 1 then
     note_on(note, 5)
-    grid_device.led(x, y, 15)
+    grid_device:led(x, y, 15)
   else
     note_off(note)
-    grid_device.led(x, y, 0)
+    grid_device:led(x, y, 0)
   end
-  grid_device.refresh()
+  grid_device:refresh()
 end
 
-grid_device.event = gridkey_event
+grid_device.key = gridkey_event
 
 local function midi_event(data)
   indicate_midi_event = true
@@ -260,9 +257,9 @@ function init()
 
   voice = Voice.new(POLYPHONY)
 
-  params:read("jah/hello_gong.pset")
+  params:read()
 
-  refresh_screen_metro = Metro.alloc(
+  refresh_screen_metro = metro.init(
     function(stage)
       redraw()
       if indicate_midi_event then
@@ -281,7 +278,7 @@ function init()
 end
 
 function cleanup()
-  params:write("jah/hello_gong.pset")
+  params:write()
 end
 
 function redraw()
