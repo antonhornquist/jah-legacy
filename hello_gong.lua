@@ -13,8 +13,8 @@
 --
 
 local ControlSpec = require 'controlspec'
-local Voice = require 'exp/voice'
-local Gong = require 'gong/jah/gong'
+local Voice = require 'voice'
+local Gong = require 'gong/lib/gong'
 
 engine.name = 'Gong'
 
