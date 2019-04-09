@@ -15,7 +15,7 @@ require 'er'
 
 engine.name = 'Gong'
 
-local Gong = require 'jah/gong'
+local Gong = require 'gong/lib/gong'
 local BeatClock = require 'beatclock'
 
 local clk = BeatClock.new()
@@ -64,14 +64,14 @@ function init()
     Gong.add_voice_params(voicenum)
   end
 
-  params:read("jah/gongfair.pset")
+  params:read()
   params:bang()
   
   clk:start()
 end
 
 function cleanup()
-  params:write("jah/gongfair.pset")
+  params:write()
 end
 
 function reset_pattern()
