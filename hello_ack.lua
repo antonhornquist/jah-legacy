@@ -28,9 +28,9 @@ local Ack = require 'ack/lib/ack'
 
 engine.name = 'Ack'
 
-local midi_device = midi.connect(1)
+local midi_device = midi.connect()
 
-local grid_device = grid.connect(1)
+local grid_device = grid.connect()
 
 local indicate_midi_event
 local indicate_gridkey_event
@@ -261,9 +261,9 @@ local function grid_refresh()
       brightness = 5
     end
 
-    grid_device.led(channel, 8, brightness)
+    grid_device:led(channel, 8, brightness)
   end
-  grid_device.refresh()
+  grid_device:refresh()
 end
 
 local function gridkey_event(x, y, s)
@@ -282,7 +282,7 @@ local function gridkey_event(x, y, s)
   end
 end
 
-grid_device.event = gridkey_event
+grid_device.key = gridkey_event
 
 function init()
   screen.aa(1)
@@ -313,9 +313,9 @@ function init()
   for channel=1,8 do
     params:add_option(channel.."_midi_note", channel..": midi note", midi_cc_note_list, default_channel_midi_notes[channel])
     Ack.add_channel_params(channel)
+    params:add_separator()
   end
 
-  params:add_separator()
   Ack.add_effects_params()
 
   refresh_metro = metro.init(
@@ -392,11 +392,11 @@ function enc(n, delta)
   else
     if all_modifier_is_held then
       for channel=1,8 do
-        params:delta(channel..": speed", delta)
+        params:delta(channel.."_speed", delta)
       end
     else
       for _, channel in pairs(selected_channels) do
-        params:delta(channel..": speed", delta)
+        params:delta(channel.."_speed", delta)
       end
     end
   end
